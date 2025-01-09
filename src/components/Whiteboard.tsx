@@ -4,6 +4,7 @@ import { io, Socket } from "socket.io-client";
 import SaveWhiteboardModal from "./SaveWhiteboardModal";
 import LoadWhiteboardModal from "./LoadWhiteboardModal";
 import RoomInfo from "./RoomInfo";
+import { API_URL } from "../utils/constants";
 
 interface WhiteboardProps {
   roomId: string;
@@ -33,7 +34,7 @@ const Whiteboard: React.FC<WhiteboardProps> = ({ roomId, email, name }) => {
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:3000", {
+    const newSocket = io(API_URL, {
       withCredentials: true,
     });
     setSocket(newSocket);
