@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { API_URL } from '../utils/constants'
 
 interface Whiteboard {
   id: string
@@ -18,7 +19,7 @@ const LoadWhiteboardModal: React.FC<LoadWhiteboardModalProps> = ({ onLoad, onClo
   useEffect(() => {
     const fetchWhiteboards = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/whiteboards')
+        const response = await fetch(`${API_URL}/api/whiteboards`)
         const data = await response.json()
         setWhiteboards(data)
       } catch (error) {
