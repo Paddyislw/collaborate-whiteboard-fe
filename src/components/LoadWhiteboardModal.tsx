@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { API_URL } from '../utils/constants'
+import { Loader2 } from 'lucide-react'
 
 interface Whiteboard {
   id: string
@@ -15,15 +16,25 @@ interface LoadWhiteboardModalProps {
 
 const LoadWhiteboardModal: React.FC<LoadWhiteboardModalProps> = ({ onLoad, onClose }) => {
   const [whiteboards, setWhiteboards] = useState<Whiteboard[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchWhiteboards = async () => {
       try {
+        setIsLoading(true)
+        setError(null)
         const response = await fetch(`${API_URL}/api/whiteboards`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch whiteboards')
+        }
         const data = await response.json()
         setWhiteboards(data)
       } catch (error) {
         console.error('Error fetching whiteboards:', error)
+        setError('Failed to load whiteboards. Please try again.')
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -34,7 +45,13 @@ const LoadWhiteboardModal: React.FC<LoadWhiteboardModalProps> = ({ onLoad, onClo
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
         <h2 className="text-2xl font-bold mb-4">Load Whiteboard</h2>
-        {whiteboards.length === 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
+          </div>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : whiteboards.length === 0 ? (
           <p>No saved whiteboards found.</p>
         ) : (
           <ul className="max-h-60 overflow-y-auto">
